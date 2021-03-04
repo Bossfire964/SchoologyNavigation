@@ -2,7 +2,9 @@ from selenium import webdriver
 import os
 import time
 import sys
+import tofile
 
+tofile.makefile()
 
 browser = webdriver.Chrome('/Users/luke/Documents/chromedriver')
 browser.get('https://lms.fcps.org')
@@ -26,32 +28,41 @@ for item in assignments:
 	time.sleep(3)
 	browser.get(linkassi[assignments.index(item)])
 	try: 
-		print(browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[3]/div/div/div/div/div/p/strong')[0].text)
+		duedate = browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[3]/div/div/div/div/div/p/strong')[0].text
+		desd = "No Description"
 		try:
-			print(browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[3]/div/div/div/div/div/div/p')[0].text)
+			desd = browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[3]/div/div/div/div/div/div/p')[0].text
 		except:
 			pass
+		titletext = browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[2]/div/div/div[1]/h1')[0].text
 		docbutton = browser.find_elements_by_xpath('//*[@id="content-wrapper"]/div/div/div/div[2]/div/div/div[1]/section/nav/div/button[2]')[0]
 		docbutton.click()
 		time.sleep(2)
+		tofile.updateTypeOne('_'.join(titletext.split()), titletext, desd, duedate)
 		browser.find_elements_by_xpath('//*[@id="header"]/header/nav/ul[1]/li[1]/a')[0].click()
 	except Exception as e:
 		print(e)
 		try:
-			print(browser.find_element_by_xpath('//*[@id="main-inner"]/div[1]/p').text)
+			destable = []
+			duedate = browser.find_element_by_xpath('//*[@id="main-inner"]/div[1]/p').text
 			text = browser.find_elements_by_xpath('//*[@id="main-inner"]/div[2]/div/div/div')
 			if len(text) == 0:
 				text = browser.find_elements_by_xpath('//*[@id="main-inner"]/div[2]/div/div/p')
 			for item in text:
-				print(item.text)
+				destable.append(item.text)
 			title = browser.find_elements_by_xpath('//*[@id="center-top"]/h2')[0].text
+			attachments = "No Attachments"
 			try:
 				attach = browser.find_elements_by_xpath('//*[@id="main-inner"]/div[3]/div')
 				for item in attach:
 					linkdoc = browser.find_elements_by_xpath('./div/span[1]/a')
-					links = linkdoc.get_attribute('href')
+					attachments = []
+					attachments.append(linkdoc.get_attribute('href'))
 			except:
 				pass
+			tofile.updateTypeTwo('_'.join(title.split()), title, duedate, destable, attachments)
 			browser.find_elements_by_xpath('//*[@id="header"]/header/nav/ul[1]/li[1]/a')[0].click()
 		except Exception as e:
 			raise e
+tofile.finishFile()
+browser.close()
