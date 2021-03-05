@@ -4,8 +4,11 @@ import json
 data = {}
 
 def makefile():
-	user = os.path.dirname(os.path.realpath(__file__)).split('/')[2]
-	f = open('/Users/' + user + '/Documents/Schoology.json', 'x')
+	path = os.path.dirname(os.path.realpath(__file__)).split('/')
+	path.pop(-1)
+	path.append('Resources')
+	path = '/'.join(path)
+	f = open(path + "/S-Upcoming.json", 'w')
 	f.close()
 def addData(key, value, under):
 	try:
