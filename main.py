@@ -3,28 +3,23 @@ import os
 import time
 import sys
 import tofile
+import help
 
-if sys.argv[1] == "help":
-	with open('README.md', "r") as f:
-		lines = f.readlines()
-		for line in lines:
-			print(line)
-	sys.exit()
+if sys.argv[1] == "upcom":
+	tofile.makefile()
 
-tofile.makefile()
+	browser = webdriver.Chrome('/Users/luke/Documents/chromedriver')#change driver location
+	browser.set_window_position(-10000,0)
+	browser.get('https://lms.fcps.org')
+	usernameBox = browser.find_elements_by_xpath('//*[@id="userNameInput"]')[0]
+	usernameBox.send_keys(sys.argv[2])
+	passwordBox = browser.find_elements_by_xpath('//*[@id="passwordInput"]')[0]
+	passwordBox.send_keys(sys.argv[3])
+	sign_in = browser.find_elements_by_xpath('//*[@id="submitButton"]')[0]
+	sign_in.click()
+	time.sleep(3)
 
-browser = webdriver.Chrome('/Users/luke/Documents/chromedriver')#change driver location
-browser.set_window_position(-10000,0)
-browser.get('https://lms.fcps.org')
-usernameBox = browser.find_elements_by_xpath('//*[@id="userNameInput"]')[0]
-usernameBox.send_keys(sys.argv[2])
-passwordBox = browser.find_elements_by_xpath('//*[@id="passwordInput"]')[0]
-passwordBox.send_keys(sys.argv[3])
-sign_in = browser.find_elements_by_xpath('//*[@id="submitButton"]')[0]
-sign_in.click()
-time.sleep(3)
 
-if sys.argv[1] == "up":
 	upcoming_event = browser.find_elements_by_xpath('//*[@id="right-column-inner"]/div[2]/div/div')
 	assignments = []
 	linkassi = []
@@ -76,4 +71,4 @@ if sys.argv[1] == "up":
 				raise e
 
 	tofile.finishFile()
-browser.close()
+	browser.close()
